@@ -1,0 +1,94 @@
+INITIAL DESCRIPTION:
+
+1 - introduction
+2 - just maven build
+3 - deploy to tomcat (tomcat installed manually)
+
+4 - tomcat on docker
+deploy on vm (tomcat server) 2,3
+deploy on docker container
+deploy on a docker container with ansible 
+deploy on k8s
+
+
+
+
+ORIGINAL FLOW IN CHAPTERS:
+1. general introduction
+2. git -> jenkins -> maven build:
+    - ec2
+    - sudo
+    - java
+    - git
+    - jenkins (git plugin + maven plugin + configure as tools + define java (usr/lib/jvm/java))
+    - job: pull code from github + build with maven + check artifact
+  
+possible to create jenkins script from GUI job?
+multiple java versions: update-alternatives --config java
+
+
+do this first as step by step job no script: 
+3. git - jenkins - maven build - manual tomcat server 
+(edit context.xml to access from outside + tomcat-users.xml for credentials to log in + deploy to container plugin in jenkins +configure tomcat credentials in jenkins + post build actions -> send war (configuration vis plugin))
+20 -> clone code and edit it     
+    - use build flow from 2
+    - setup tomcat server on ec2, sudo, install java, install tomcat manually
+
+
+4. git - jenkins - maven build - docker tomcat container (docker ec-2 + tomcat image from dockerfile + publish over ssh with dockeradmin)
+
+5. git - jenkins - maven build - ssh agent to ansible, send files to ansible - from ansible connect with docker
+
+6. git - jenkins - maven build - ssh agent to ansible, send files to ansible - from ansible run a k8s cluster (master)
+
+docker start  `docker ps -q -l` # restart it in the background
+docker exec -it <mycontainer> sh
+
+------------
+
+
+FINAL FLOW:
+ec2-jenkins-server setup:
+- jenkins.sh
+- configure jenkins, git, maven tool
+- install publish over ssh
+
+
+ec2-ansible-server setup:
+- ansible.sh
+- create ansadmin (+passwd)
+- visudo -> add to sudoers
+- vi /etc/ssh/sshd_config -> enable password (connection from jenkins)
+- service sshd reload
+- on ansadmin profile create ssh keys: ssh-keygen
+
+
+ec2-k8s-server setup:
+- k8s.sh
+- create iam role (eksctl role) -> attach this role to eks bootstrap
+- create ansadmin (+passwd)
+- visudo -> add to sudoers
+- vi /etc/ssh/sshd_config -> enable password (connection from jenkins)
+- service sshd reload
+
+create cluster (20min, cloud formation):
+eksctl create cluster --name=devopst \
+--region us-east-1 \
+--node-type t2.small
+
+delete cluster:
+eksctl delete cluster devopst --region us-east-1
+
+
+integrate ansible with jenkins & k8s:
+as ansadmin:
+- add to ansible hosts file: sudo vi /etc/ansible/hosts -> add ansible ip with [ansible] and k8s ip with [k8s]
+- copy ssh to k8s-server (to ansadmin user) and to itself keys: ssh-copy-id [ip] (ssh key required by ansible)
+- test connection: ansible all -m ping / ansible all -a uptime
+- add ansible-server to ssh credentials in jenkins
+
+
+create job [rdy in jenkinsfile]:
+- publish over ssh (github -> jenkins -> transfer needed files to ansible server //opt/docker)
+- build the image and push it to dockerhub (log in to dockerhub)
+- use deploy & service files to create a k8s deployment (ansible playbook)
