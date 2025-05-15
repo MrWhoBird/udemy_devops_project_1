@@ -1,3 +1,6 @@
+good to know:
+multiple java versions: update-alternatives --config java
+
 INITIAL DESCRIPTION:
 
 1 - introduction
@@ -22,18 +25,17 @@ ORIGINAL FLOW IN CHAPTERS:
     - git
     - jenkins (git plugin + maven plugin + configure as tools + define java (usr/lib/jvm/java))
     - job: pull code from github + build with maven + check artifact
-  
-possible to create jenkins script from GUI job?
-multiple java versions: update-alternatives --config java
 
+3. git -> jenkins -> maven build -> manual tomcat server (ec2, sudo, java, tomcat):
+    - edit context.xml to access from outside
+    - tomcat-users.xml for credentials to log in
+    - 'deploy to container' plugin in jenkins
+    - configure tomcat credentials in jenkins
+    - post build actions -> send war (configuration vis plugin)
 
-do this first as step by step job no script: 
-3. git - jenkins - maven build - manual tomcat server 
-(edit context.xml to access from outside + tomcat-users.xml for credentials to log in + deploy to container plugin in jenkins +configure tomcat credentials in jenkins + post build actions -> send war (configuration vis plugin))
-20 -> clone code and edit it     
-    - use build flow from 2
-    - setup tomcat server on ec2, sudo, install java, install tomcat manually
-
+*****
+    - poll scm
+    - manual + jenkinsfile script
 
 4. git - jenkins - maven build - docker tomcat container (docker ec-2 + tomcat image from dockerfile + publish over ssh with dockeradmin)
 
