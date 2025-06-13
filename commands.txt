@@ -1,5 +1,8 @@
 good to know:
 multiple java versions: update-alternatives --config java
+ubuntu ec2 login: ChallengeResponseAuthentication yes -> sshd_config
+get into container: docker exec -it [id] /bin/bash
+https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-10-on-ubuntu-20-04
 
 INITIAL DESCRIPTION:
 
@@ -7,7 +10,7 @@ INITIAL DESCRIPTION:
 2 - just maven build
 3 - deploy to tomcat (tomcat installed manually)
 
-4 - tomcat on docker
+4 - tomcat on docker (automatic tomcat)
 deploy on vm (tomcat server) 2,3
 deploy on docker container
 deploy on a docker container with ansible 
@@ -31,13 +34,24 @@ ORIGINAL FLOW IN CHAPTERS:
     - tomcat-users.xml for credentials to log in
     - 'deploy to container' plugin in jenkins
     - configure tomcat credentials in jenkins
-    - post build actions -> send war (configuration vis plugin)
+    - post build actions -> send war (configuration with plugin)
+
+4. git -> jenkins -> maven build -> docker tomcat container
+    - ec2 -> install docker + dockeradmin usr & docker group
+    - add dockerhost in jenkins + publish over ssh with dockeradmin (in job)
+    - add exec cmd in jenkins job to rebuild Dockerfile each time
+
+dockeruser / docker group on jenkins + ssh/sshd
+create a job script -> artifact should be owned by dockeradmin?
++ /opt/docker create and give ownership by dockeradmin (29 )
+
+docker stop tomcat_container
+docker rm tomcat_container
+docker rmi tomcat_image
+docker build . -t tomcat_image
+docker run -d --name tomcat_container -p 8087:8080 tomcat_image
 
 *****
-    - poll scm
-    - manual + jenkinsfile script
-
-4. git - jenkins - maven build - docker tomcat container (docker ec-2 + tomcat image from dockerfile + publish over ssh with dockeradmin)
 
 5. git - jenkins - maven build - ssh agent to ansible, send files to ansible - from ansible connect with docker
 
