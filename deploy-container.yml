@@ -1,0 +1,16 @@
+---
+- hosts: docker
+  tasks:
+  - name: stop container
+    command: docker stop udemy_devops_project_1_cont
+    ignore_errors: yes
+
+  - name: remove container
+    command: docker rm udemy_devops_project_1_cont
+
+  - name: remove image
+    command: docker rmi udemy_devops_project_1_img
+    ignore_errors: yes
+
+  - name: create docker container
+    command: docker run -d --name udemy_devops_project_1_cont -p 8085:8080 devopst/udemy_devops_project_1_img

@@ -1,0 +1,9 @@
+---
+- hosts: ansible
+  tasks:
+  - name: create docker image
+    command: docker build -t devopst/udemy_devops_project_1_img:latest .
+    args:
+      chdir: /home/ansadmin
+  - name: push docker image
+    command: docker push devopst/udemy_devops_project_1_img:latest

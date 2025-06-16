@@ -2,6 +2,7 @@ good to know:
 multiple java versions: update-alternatives --config java
 ubuntu ec2 login: ChallengeResponseAuthentication yes -> sshd_config
 get into container: docker exec -it [id] /bin/bash
+sudo update-alternatives --config editor
 https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-10-on-ubuntu-20-04
 
 INITIAL DESCRIPTION:
@@ -9,7 +10,6 @@ INITIAL DESCRIPTION:
 1 - introduction
 2 - just maven build
 3 - deploy to tomcat (tomcat installed manually)
-
 4 - tomcat on docker (automatic tomcat)
 deploy on vm (tomcat server) 2,3
 deploy on docker container
@@ -41,25 +41,25 @@ ORIGINAL FLOW IN CHAPTERS:
     - add dockerhost in jenkins + publish over ssh with dockeradmin (in job)
     - add exec cmd in jenkins job to rebuild Dockerfile each time
 
-dockeruser / docker group on jenkins + ssh/sshd
-create a job script -> artifact should be owned by dockeradmin?
-+ /opt/docker create and give ownership by dockeradmin (29 )
+5. git -> jenkins -> maven build -> ssh agent to ansible (send files) -> from ansible connect with docker
+    - ec2 -> as root ansadmin/password + sudoers, as ansadmin ssh keygen, as root install ansible
+    - on jenkins -> add ansible-server (publish oer ssh) -> transfer .war to ansible
+    - on docker-server -> add ansadmin, add to sudoers, enable password
+    - on anssible-server -> add docker-server to ansible host file, copy ssh keys to docker AND to ansible, test connection
+    - on ansible-server -> install docker & add ansadmin to docker group + create Dockerfile as above
+    - create new playbooks -> create-image.yml + deploy-container.yml + login to dockerhub from ansible + add playbooks execution command to jenkins
 
-docker stop tomcat_container
-docker rm tomcat_container
-docker rmi tomcat_image
-docker build . -t tomcat_image
-docker run -d --name tomcat_container -p 8087:8080 tomcat_image
 
 *****
-
-5. git - jenkins - maven build - ssh agent to ansible, send files to ansible - from ansible connect with docker
 
 6. git - jenkins - maven build - ssh agent to ansible, send files to ansible - from ansible run a k8s cluster (master)
 
 docker start  `docker ps -q -l` # restart it in the background
 docker exec -it <mycontainer> sh
 
+
+create a job script -> artifact should be owned by dockeradmin?
++ /opt/docker create and give ownership by dockeradmin (29)
 ------------
 
 
