@@ -7,9 +7,10 @@
 
   - name: remove container
     command: docker rm udemy_devops_project_1_cont
+    ignore_errors: yes
 
   - name: remove image
-    command: docker rmi udemy_devops_project_1_img
+    command: docker rmi devopst/udemy_devops_project_1_img
     ignore_errors: yes
 
   - name: create docker container
